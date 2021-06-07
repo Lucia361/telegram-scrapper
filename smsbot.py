@@ -109,8 +109,8 @@ class main():
         message = input(gr+"[+] Enter Your Message : "+re)
         
         # Sets up the secret chat manager, if it is selected.
+        queued_messages = dict()
         if use_secret:
-            queued_messages = dict()
             manager = SecretChatManager(client, auto_accept=True)
             async def new_chat(chat, created_by_me):
                 # Runs whenever a secret chat is created.
