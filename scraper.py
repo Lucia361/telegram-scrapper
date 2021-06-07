@@ -1,10 +1,12 @@
 from telethon.sync import TelegramClient
 from telethon.tl.functions.messages import GetDialogsRequest
 from telethon.tl.types import InputPeerEmpty
+from telethon.errors.rpcerrorlist import SessionPasswordNeededError
 import os, sys
 import configparser
 import csv
 import time
+import getpass
 
 re="\033[1;31m"
 gr="\033[1;32m"
@@ -39,7 +41,13 @@ if not client.is_user_authorized():
     client.send_code_request(phone)
     os.system('clear')
     banner()
-    client.sign_in(phone, input(gr+'[+] Enter the code: '+re))
+    code = input(gr+'[+] Enter the code: '+re)
+    try:
+        client.sign_in(phone, code=code)
+    except SessionPasswordNeededError as e:
+        pwd_prompt = gr+'[+] Enter 2FA password: '+re
+        password = getpass.getpass(prompt=pwd_prompt)
+        client.sign_in(password=password)
  
 os.system('clear')
 banner()
@@ -59,7 +67,7 @@ chats.extend(result.chats)
  
 for chat in chats:
     try:
-        if chat.megagroup== True:
+        if chat.megagroup == True:
             groups.append(chat)
     except:
         continue
