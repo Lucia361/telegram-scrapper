@@ -1,68 +1,43 @@
-<p align="center">
-  <img src="https://raw.githubusercontent.com/th3unkn0n/TeleGram-Scraper/master/.image/20191203_205322.jpg" width="470" height="150">
-</p>
+# Telegram Scrapper
 
-<p align="center"><img src="https://img.shields.io/badge/Version-3.1-brightgreen"></p>
-<p align="center">
-  <a href="https://github.com/th3unkn0n">
-    <img src="https://img.shields.io/github/followers/th3unkn0n?label=Follow&style=social">
-  </a>
-  <a href="https://github.com/th3unkn0n/TeleGram-Group-Scraper">
-    <img src="https://img.shields.io/github/stars/th3unkn0n/TeleGram-Group-Scraper?style=social">
-  </a>
-</p>
-<p align="center">
-  Telegram Group Scrapper
-</p>
-<p align="center">
-</p>
+Based on [TeleGram-Scraper by th3unkn0n.](https://github.com/th3unkn0n/TeleGram-Scraper)
 
----
+This version supports secret chat DMs.
 
-## • API Setup
+# API Setup
+
 * Go to http://my.telegram.org  and log in.
 * Click on API development tools and fill the required fields.
-* put app name you want & select other in platform Example :
-* copy "api_id" & "api_hash" after clicking create app ( will be used in setup.py )
+* Insert an app name.
+* Copy "api_id" and "api_hash" after creating the app
+	* They will be used during setup.
 
-## • How To Install and Use
+# Installation and Usage
+
+* Install requirements:
 
 `$ pkg install -y git python`
 
-`$ git clone https://github.com/th3unkn0n/TeleGram-Scraper.git`
+`$ git clone https://github.com/klement01/telegram-scrapper.git`
 
-`$ cd TeleGram-Scraper`
+`$ cd telegram-scrapper`
 
-* Install requierments
+* Setup configuration file (using the api_id and api_hash):
 
 `$ python3 setup.py -i`
 
-* setup configration file ( apiID, apiHASH )
+* Generate user data:
 
 `$ python3 setup.py -c`
 
-* To Genrate User Data
+* Collect contact data from Telegram groups:
 
-`$ python3 scraper.py`
+`$ python3 scrapper.py`
 
-* ( members.csv is default if you changed name use it )
-* Send Bulk sms To Collected Data 
+* Send bulk SMS to collected data:
 
 `$ python3 smsbot.py members.csv`
 
-* Update Tool
+* Update:
 
 `$ python3 setup.py -u`
-
----
-
-<p align="center">
-  Follow Me On
-</p>
-<p align="center">
-  <a href="https://youtube.com/channel/UCnknCgg_3pVXS27ThLpw3xQ">
-    <img src="https://github.com/th3unkn0n/extra/blob/master/.img/yt.png" width="40" height="40">
-  </a>
-  <a href="https://twitter.com/th3unkn0n">
-    <img src="https://github.com/th3unkn0n/extra/blob/master/.img/tw.png" width="40" height="40">
-</p>

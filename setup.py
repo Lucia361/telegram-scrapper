@@ -37,14 +37,14 @@ def requirements():
 		csv_lib()
 	else:
 		pass
-	print(gr+"[+] Installing requierments ...")
+	print(gr+"[+] Installing requirements ...")
 	os.system("""
 		pip3 install telethon telethon-secret-chat requests configparser
 		python3 -m pip install telethon telethon-secret-chat requests configparser
 		touch config.data
 		""")
 	banner()
-	print(gr+"[+] requierments Installed.\n")
+	print(gr+"[+] Requirements installed.\n")
 
 
 def config_setup():
