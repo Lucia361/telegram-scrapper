@@ -9,14 +9,14 @@ This version supports secret chat DMs.
 * Go to http://my.telegram.org  and log in.
 * Click on API development tools and fill the required fields.
 * Insert an app name.
-* Copy "api_id" and "api_hash" after creating the app
+* Copy "api_id" and "api_hash" after creating the app.
 	* They will be used during setup.
 
 # Installation and Usage
 
-* Install requirements:
+* Install requirements for Ubuntu:
 
-`$ pkg install -y git python`
+`# apt install -y git python`
 
 `$ git clone https://github.com/klement01/telegram-scrapper.git`
 
@@ -24,20 +24,20 @@ This version supports secret chat DMs.
 
 * Setup configuration file (using the api_id and api_hash):
 
-`$ python3 setup.py -i`
+`$ python setup.py -i`
 
 * Generate user data:
 
-`$ python3 setup.py -c`
+`$ python setup.py -c`
 
 * Collect contact data from Telegram groups:
 
-`$ python3 scrapper.py`
+`$ python scrapper.py`
 
 * Send bulk SMS to collected data:
 
-`$ python3 smsbot.py members.csv`
+`$ python smsbot.py members.csv`
 
 * Update:
 
-`$ python3 setup.py -u`
+`$ python setup.py -u`
