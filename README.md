@@ -4,6 +4,12 @@ Based on [TeleGram-Scraper by th3unkn0n.](https://github.com/th3unkn0n/TeleGram-
 
 This version supports secret chat DMs.
 
+# telethon-secret-chat
+
+Includes the latest version of [telethon-secret-chat](https://github.com/painor/telethon-secret-chat/tree/7aa0c9a3b0fa5b3288a6107958b0908b2f35814c), as of June 8th, 2021, for dealing with secret chats.
+
+This program requires an SQLite fix not yet available on [telethon-secret-chat 0.2.4](https://pypi.org/project/telethon-secret-chat/), hosted on the Python Package Index.
+
 # API Setup
 
 * Go to http://my.telegram.org  and log in.

@@ -1,15 +1,17 @@
 #!/bin/env python3
+from enum import Enum
 from telethon import TelegramClient
 from telethon.tl.types import InputPeerUser
 from telethon.errors.rpcerrorlist import PeerFloodError, SessionPasswordNeededError, FloodWaitError
 from telethon_secret_chat import SecretChatManager
-from enum import Enum
 import asyncio
 import configparser
-import os, sys
 import csv
-import random
 import getpass
+import os
+import random
+import sqlite3
+import sys
 
 re="\033[1;31m"
 gr="\033[1;32m"
@@ -22,15 +24,6 @@ class ExitCode(Enum):
     NO_SETUP_ERROR = 1
     INVALID_MODE_ERROR = 2
     FLOOD_ERROR = 3    
-
-async def start_chat_safe(manager, participant):
-    while True:
-        try:
-            await manager.start_secret_chat(participant)
-            return
-        except FloodWaitError as e:
-            print(re+f"[!] Rate limited for {e.seconds} seconds.")
-            await asyncio.sleep(e.seconds + 3)
 
 class main():
 
@@ -70,7 +63,7 @@ class main():
             code = input(gr+'[+] Enter the code: '+re)
             try:
                 client.sign_in(phone, code=code)
-            except SessionPasswordNeededError as e:
+            except SessionPasswordNeededError:
                 pwd_prompt = gr+'[+] Enter 2FA password: '+re
                 password = getpass.getpass(prompt=pwd_prompt)
                 client.sign_in(password=password)
@@ -92,26 +85,27 @@ class main():
                 users.append(user)
 
         # Gets options from the user (mode, secret chat, message, etc.)
-        # Mode:
+        # Mode.
         print(gr+"[1] send sms by user ID\n[2] send sms by username ")
         mode = 0
         while (mode not in (1,2)):
             try:
                 mode = int(input(gr+"Input : "+re))
-            except ValueError as e:
+            except ValueError:
                 pass
 
-        # Secret chat:
+        # Secret chat.
         use_secret = input(gr+"Use secret chat [y/N]? ")
         use_secret = use_secret.lower() in "yes" and use_secret != ""
         
-        # Message:
+        # Message.
         message = input(gr+"[+] Enter Your Message : "+re)
         
         # Sets up the secret chat manager, if it is selected.
         queued_messages = dict()
         if use_secret:
-            manager = SecretChatManager(client, auto_accept=True)
+            db_conn = sqlite3.connect(f"chats-{phone}.db")
+            manager = SecretChatManager(client, auto_accept=False, session=db_conn)
             async def new_chat(chat, created_by_me):
                 # Runs whenever a secret chat is created.
                 if created_by_me:
@@ -121,6 +115,7 @@ class main():
                         message = queued_messages[key]
                         del queued_messages[key]
                     except KeyError as e:
+                        print(f"Couldn't find message to ID {key}: {e}")
                         return
                     
                     # Tries sending the message.
@@ -148,17 +143,32 @@ class main():
             try:
                 formatted_message = message.format(user['name'])
                 if use_secret:
-                    print(gr+"[+] Creating chat with:", user['name'])
-                    key = receiver.user_id
-                    queued_messages[key] = formatted_message
+                    # Secret DM.
+                    # Tries to find a previous chat with the user.
                     try:
-                        await start_chat_safe(manager, receiver)
-                    except Exception as e:
-                        print(re+"[!] Error creating chat with:", user['name'])
-                        del queued_messages[key]
+                        chat = manager.get_secret_chat(receiver.user_id)
+                    except ValueError:
+                        chat = None
+                    else:
+                        print(gr+"[+] Chat found with:", user['name'])
+                        await manager.send_secret_message(chat, formatted_message)
+
+                    # If no chat is found, creates it.
+                    if chat is None:
+                        key = receiver.user_id
+                        queued_messages[key] = formatted_message
+                        try:
+                            print(gr+"[+] Creating chat with:", user['name'])
+                            await start_chat_safe(manager, receiver)
+                        except Exception as e:
+                            print(re+f"[!] Error creating chat with {user['name']}: {e}")
+                            del queued_messages[key]
                 else:
+                    # Regular DM.
                     print(gr+"[+] Sending Message to:", user['name'])
                     await client.send_message(receiver, formatted_message)
+
+                # Sleeps to avoid being rate limited.
                 print(gr+"[+] Waiting {} seconds".format(SLEEP_TIME))
                 await asyncio.sleep(SLEEP_TIME)
             except PeerFloodError:
@@ -178,6 +188,15 @@ class main():
         # Disconnects the client.
         await client.disconnect()
         print(gr+"[+] Done. Message sent to all users.")
+
+async def start_chat_safe(manager, participant):
+    while True:
+        try:
+            await manager.start_secret_chat(participant)
+            return
+        except FloodWaitError as e:
+            print(re+f"[!] Rate limited for {e.seconds} seconds.")
+            await asyncio.sleep(e.seconds + 3)
 
 asyncio.run(main.send_sms())
 sys.exit(ExitCode.SUCCESS)

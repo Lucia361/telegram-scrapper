@@ -1,5 +1,5 @@
 # Python virtual environment stuff.
-/__pycache__
+*__pycache__*
 /Scripts
 /Lib
 /Include
@@ -9,3 +9,4 @@
 *.data
 *.session
 *.csv
+*.db
