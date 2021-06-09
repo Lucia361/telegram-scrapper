@@ -116,7 +116,7 @@ class SecretSQLiteSession(SecretMemorySession):
 
     def get_secret_chat_by_id(self, id):
         row = self._execute(
-            f"select * from {TABLE_NAME} where temp=0 and id = ? or user_id = ? ORDER BY UPDATED", id, id)
+            f"select * from {TABLE_NAME} where temp=0 and id = ? or user_id = ? ORDER BY UPDATED DESC", id, id)
 
         if row:
             input_chat = InputEncryptedChat(chat_id=row[0], access_hash=row[1])

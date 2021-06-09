@@ -2,7 +2,7 @@
 from enum import Enum
 from telethon import TelegramClient
 from telethon.tl.types import InputPeerUser
-from telethon.errors.rpcerrorlist import PeerFloodError, SessionPasswordNeededError, FloodWaitError
+from telethon.errors.rpcerrorlist import PeerFloodError, SessionPasswordNeededError, FloodWaitError, EncryptionDeclinedError
 from telethon_secret_chat import SecretChatManager
 import asyncio
 import configparser
@@ -151,7 +151,11 @@ class main():
                         chat = None
                     else:
                         print(gr+"[+] Chat found with:", user['name'])
-                        await manager.send_secret_message(chat, formatted_message)
+                        try:
+                            await manager.send_secret_message(chat, formatted_message)
+                        except EncryptionDeclinedError:
+                            print(re+"[!] Chat invalid, creating a new chat.")
+                            chat = None
 
                     # If no chat is found, creates it.
                     if chat is None:
